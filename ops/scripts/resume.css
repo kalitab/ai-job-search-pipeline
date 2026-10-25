@@ -1,0 +1,147 @@
+/* Resume print style — house rules: Arial only (Calibri / Times New Roman are the
+   only other permitted fonts), no italics anywhere, bold for headings and labels,
+   single column, no tables, icons or colour accents.
+   "Liberation Sans" is listed only as Arial's metric-identical stand-in for machines
+   without Arial (e.g. the Linux export box); on Windows/Mac Arial is used. */
+
+@page {
+  size: A4;
+  margin: 18mm;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 11pt;
+}
+
+body {
+  font-family: Arial, Helvetica, "Liberation Sans", sans-serif;
+  font-size: 10.5pt;
+  line-height: 1.18;
+  color: #111111;
+  background: #ffffff;
+  margin: 0;
+  font-style: normal;
+}
+
+.resume {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0;
+}
+
+/* Candidate name */
+h1 {
+  font-family: inherit;
+  font-size: 20pt;
+  font-weight: 700;
+  line-height: 1.1;
+  font-style: normal;
+  margin: 0 0 5pt;
+}
+
+/* Main sections */
+h2 {
+  font-family: inherit;
+  font-size: 12.5pt;
+  font-weight: 700;
+  font-style: normal;
+  line-height: 1.15;
+  margin: 10pt 0 5pt;
+  padding-bottom: 2pt;
+  border-bottom: 0.5pt solid #888888;
+  break-after: avoid;
+}
+
+/* Subheadings and job titles */
+h3,
+.job-title {
+  font-family: inherit;
+  font-size: 10.5pt;
+  font-weight: 700;
+  font-style: normal;
+  margin: 0 0 2pt;
+  break-after: avoid;
+}
+
+p {
+  margin: 0 0 4pt;
+}
+
+ul {
+  list-style-type: disc;
+  margin: 3pt 0 6pt 15pt;
+  padding: 0;
+}
+
+li {
+  margin: 0 0 3pt;
+  padding: 0;
+  break-inside: avoid;
+}
+
+.contact a { white-space: nowrap; }                      /* keep the LinkedIn URL on one line */
+
+.contact {
+  font-size: 9.5pt;                                     /* 10pt runs 5mm past the 174mm text width */
+  line-height: 1.25;
+  margin-bottom: 7pt;
+  overflow-wrap: anywhere;
+}
+
+a,
+a:visited {
+  color: inherit;
+  text-decoration: underline;
+  overflow-wrap: anywhere;
+}
+
+strong,
+b {
+  font-weight: 700;
+}
+
+em,
+i,
+cite,
+var,
+dfn,
+address {
+  font-style: normal;
+}
+
+/* ---- additions for the pandoc export (not in the source CSS) ---- */
+header#title-block-header { display: none; }          /* pandoc's empty title block */
+h3 { margin-top: 7pt; }                                /* space between roles */
+.label { margin-top: 4pt; break-after: avoid; }                /* bold "1) Label" lines inside a role */
+table { display: none; }                               /* tables are banned; lint fails them first */
+
+/* Printing or PDF export */
+@media print {
+  html,
+  body {
+    background: #ffffff;
+    color: #111111;
+    margin: 0;
+  }
+
+  .resume {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  a,
+  a:visited {
+    color: #111111;
+  }
+
+  h2,
+  h3,
+  .job-title {
+    break-after: avoid;
+  }
+}

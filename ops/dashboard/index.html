@@ -1,0 +1,518 @@
+<title>Job Search</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=Public+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: one centered 880px column; header wordmark + tab nav; card feed. */
+:root{
+  --bg:#f6f5f1; --surface:#fffefb; --ink:#20242a; --muted:#686e76; --line:#e2dfd6;
+  --accent:#7d2436; --on-accent:#ffffff; --chip:#eeebe2; --chip-ink:#4d5157;
+  --good:#1d7a4f; --warn:#996000; --bad:#b3261e; --bad-bg:#fbeae8;
+  --serif:"Source Serif 4",Georgia,serif; --sans:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#15171b; --surface:#1d2026; --ink:#e9e7e2; --muted:#9aa1a9; --line:#2d3139;
+  --accent:#e08397; --on-accent:#271014; --chip:#272b32; --chip-ink:#b8bec6;
+  --good:#53c08d; --warn:#e3b04a; --bad:#f08279; --bad-bg:#3a2320; color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#15171b; --surface:#1d2026; --ink:#e9e7e2; --muted:#9aa1a9; --line:#2d3139;
+  --accent:#e08397; --on-accent:#271014; --chip:#272b32; --chip-ink:#b8bec6;
+  --good:#53c08d; --warn:#e3b04a; --bad:#f08279; --bad-bg:#3a2320; color-scheme:dark;
+}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0}
+.wrap{max-width:880px;margin:0 auto;padding-block:20px 56px}
+h1{font-family:var(--serif);font-size:1.45rem;font-weight:700;margin:0;text-wrap:balance}
+h2{font-family:var(--serif);font-size:1.1rem;font-weight:600;margin:26px 0 10px}
+a{color:var(--accent)}
+.sub{color:var(--muted);font-size:.84rem;margin-top:2px}
+header.app{display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px;justify-content:space-between;padding-bottom:14px;border-bottom:2px solid var(--ink)}
+nav.tabs{display:flex;gap:4px;flex-wrap:wrap}
+nav.tabs button{font:inherit;font-weight:600;font-size:.88rem;color:var(--muted);background:none;border:none;border-radius:8px;padding:7px 12px;cursor:pointer}
+nav.tabs button[aria-current="true"]{background:var(--accent);color:var(--on-accent)}
+nav.tabs button:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.banner{background:var(--chip);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:16px 0 0;font-size:.9rem}
+.banner strong{color:var(--accent)}
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 6px;align-items:center}
+select,input[type="text"],input[type="date"]{font:inherit;font-size:.86rem;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 9px;min-width:0}
+.filters .grow{flex:1 1 140px}
+button.act{font:inherit;font-size:.85rem;font-weight:600;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:7px 12px;cursor:pointer}
+button.act.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+button.act:disabled{opacity:.5;cursor:default}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:12px 0}
+.card .top{display:flex;gap:10px;align-items:baseline;justify-content:space-between;flex-wrap:wrap}
+.card .top h3{font-size:1.02rem;font-weight:700;margin:0;min-width:0}
+.fit{font-variant-numeric:tabular-nums;font-weight:700;font-size:.82rem;border:1.5px solid var(--accent);color:var(--accent);border-radius:999px;padding:2px 10px;white-space:nowrap}
+.meta{color:var(--muted);font-size:.84rem;margin-top:3px}
+.summary{margin:10px 0 0}
+.snapshot{background:var(--chip);color:var(--chip-ink);border-radius:8px;padding:8px 12px;margin-top:10px;font-size:.85rem}
+.snapshot.flagged{background:var(--bad-bg);color:var(--ink)}
+.snapshot .r{font-weight:700;color:var(--ink)}
+.why{margin:10px 0 0;padding-left:18px;font-size:.92rem}
+.why li{margin:2px 0}
+.gap{color:var(--warn);font-size:.86rem;margin-top:6px}
+.ok{color:var(--good);font-weight:600}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.tag{font-size:.76rem;font-weight:600;background:var(--chip);color:var(--chip-ink);border-radius:999px;padding:2px 9px}
+.tag.warn{color:var(--warn)}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.state{font-size:.8rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.state.shortlisted{color:var(--good)} .state.applied{color:var(--accent)} .state.skipped{color:var(--muted)}
+.tailored{border-top:1px dashed var(--line);margin-top:14px;padding-top:12px;font-size:.9rem}
+.tailored pre{white-space:pre-wrap;background:var(--chip);border-radius:8px;padding:10px 12px;max-height:280px;overflow:auto;font:0.82rem/1.5 var(--sans)}
+.empty{color:var(--muted);text-align:center;padding:40px 10px;border:1px dashed var(--line);border-radius:12px;margin:16px 0}
+.rowline{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+.rowline label{font-size:.8rem;color:var(--muted)}
+.count{font-variant-numeric:tabular-nums;font-weight:500;opacity:.8}
+.count:empty{display:none}
+.track{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;background:var(--chip);border-radius:8px;padding:9px 12px;margin-top:12px;font-size:.86rem}
+.track label{color:var(--muted);font-size:.8rem;margin-right:4px}
+.track input[type="text"]{flex:1 1 180px}
+table.list{width:100%;border-collapse:collapse;font-size:.88rem}
+.scroller{overflow-x:auto}
+table.list th{text-align:left;font-size:.76rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding:8px 10px;border-bottom:1px solid var(--line)}
+table.list td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+.muted{color:var(--muted)} .small{font-size:.84rem}
+#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);border-radius:10px;padding:10px 16px;font-size:.88rem;max-width:90%;z-index:20}
+@media (prefers-reduced-motion:no-preference){ #toast{transition:opacity .25s} }
+@media (max-width:560px){ .card{padding:14px} header.app{align-items:flex-start} }
+</style>
+
+<div class="wrap">
+<header class="app">
+  <div>
+    <h1>Job Search</h1>
+    <div class="sub" id="lastScan">Loading…</div>
+  </div>
+  <nav class="tabs" aria-label="Sections">
+    <button id="tab-jobs" data-v="jobs">Jobs <span class="count" id="n-jobs"></span></button>
+    <button id="tab-applied" data-v="applied">Applied <span class="count" id="n-applied"></span></button>
+    <button id="tab-skipped" data-v="skipped">Skipped <span class="count" id="n-skipped"></span></button>
+    <button id="tab-resumes" data-v="resumes">Resumes</button>
+    <button id="tab-outreach" data-v="outreach">Outreach</button>
+  </nav>
+</header>
+
+<div id="due" hidden class="banner"></div>
+<div id="roNote" hidden class="banner">You have view-only access, so buttons won't save changes. Ask the page owner to share it with edit access.</div>
+
+<section id="v-jobs" hidden>
+  <div class="filters">
+    <select id="f-status"><option value="">New and shortlisted</option><option value="new">New</option><option value="shortlisted">Shortlisted</option></select>
+    <select id="f-city"><option value="">All locations</option></select>
+    <input type="text" id="f-q" class="grow" placeholder="Search title or company">
+    <button class="act" id="processAll">Tailor all shortlisted</button>
+  </div>
+  <div id="jobsMain"></div>
+  <h2 id="maybeHead" hidden>Maybe — lower fit, gated startups, unnamed clients</h2>
+  <div id="jobsMaybe"></div>
+</section>
+
+<section id="v-applied" hidden>
+  <h2>Applied</h2>
+  <p class="sub">Jobs move here when marked Applied. Update the stage and next step on each card as things move.</p>
+  <div id="appliedList"></div>
+</section>
+
+<section id="v-skipped" hidden>
+  <h2>Skipped</h2>
+  <p class="sub">Jobs move here when skipped. The daily scan won't add them again. Shortlist one to bring it back to Jobs.</p>
+  <div id="skippedList"></div>
+</section>
+
+<section id="v-resumes" hidden>
+  <h2>Master resume</h2>
+  <div id="masterBox" class="card"><span class="muted">Loading…</span></div>
+  <h2>Tailored versions</h2>
+  <p class="sub">One per job, created with Tailor now. Downloads are A4 PDFs in Arial, no italics. Each scheduled run audits new drafts, archives them to GitHub and marks them checked.</p>
+  <div id="tailoredList"></div>
+</section>
+
+<section id="v-outreach" hidden>
+  <h2>Outreach</h2>
+  <p class="sub">Recruiters and company contacts. Contacts found by the daily scan appear here. Log your own messages by hand.</p>
+  <div id="outreachList"></div>
+</section>
+</div>
+
+<div id="toast" hidden></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const today=()=>new Date().toISOString().slice(0,10);
+let db=null,sample=null,downloads=null,canWrite=true,readOnlyShown=false;
+let jobs=[],apps=[],outreach=[],master=null,runs=[];
+
+function toast(m){const t=$("toast");t.textContent=m;t.hidden=false;clearTimeout(t._h);t._h=setTimeout(()=>t.hidden=true,4200);}
+function writeFail(e){
+  if(e&&e.code==="invalid_argument"&&!readOnlyShown){readOnlyShown=true;canWrite=false;$("roNote").hidden=false;toast("That change wasn't saved — this account has view-only access.");}
+  else toast("Couldn't save: "+(e&&e.message||e));
+}
+async function save(path,data,merge){try{const r=db.doc(path);merge?await r.update(data):await r.set(data);}catch(e){writeFail(e);throw e;}}
+
+/* ---------- views ---------- */
+const VIEWS=["jobs","applied","skipped","resumes","outreach"];
+function show(v){ if(!VIEWS.includes(v))v="jobs";
+  for(const x of VIEWS){$("v-"+x).hidden=x!==v;$("tab-"+x).setAttribute("aria-current",x===v);}
+  if(location.hash!=="#"+v){try{history.replaceState(null,"","#"+v);}catch(_){}}
+}
+for(const x of VIEWS)$("tab-"+x).onclick=()=>show(x);
+{const h=(location.hash||"#jobs").slice(1);show(h==="applications"?"applied":h);}   // old links to #applications
+
+/* ---------- renderers ---------- */
+function snapshotHtml(s){
+  if(!s)return '<div class="snapshot">Company rating not available yet</div>';
+  const flag=s.rating&&s.rating<3.5, src=s.source||"AmbitionBox";
+  const part=(label,v)=>v!=null&&v!==""?` · ${label} ${esc(v)}`:"";
+  return `<div class="snapshot${flag?' flagged':''}">Company: <span class="r">${esc(src)} ${esc(s.rating)}</span>${s.reviews!=null?` (${esc(s.reviews)} reviews)`:""}${flag?' — below the 3.5 bar':''}
+   ${part("WLB",s.wlb)}${part("culture",s.culture)}${part("growth",s.growth)}${s.headcount?` · ${esc(s.headcount)} staff`:""}
+   ${s.url?` · <a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(src)} page</a>`:""}</div>`;
+}
+function jobCard(j){
+  const d=j.data(),id=j.id;
+  const st=d.status||"new";
+  const tags=(d.tags||[]).map(t=>`<span class="tag${/unnamed|verify|older|pending/i.test(t)?' warn':''}">${esc(t)}</span>`).join("");
+  const srcs=(d.sources||[]).join(", ");
+  const t=d.tailored;
+  return `<article class="card" data-id="${esc(id)}">
+    <div class="top"><h3>${esc(d.title)} — ${esc(d.company)}</h3><span class="fit">Fit ${esc(d.fit??"–")}</span></div>
+    <div class="meta">${esc(d.city||"")}${d.workMode?" · "+esc(d.workMode):""}${d.pay?" · "+esc(d.pay):""}${d.exp?" · "+esc(d.exp):""} · posted ${esc(d.posted||"?")} · via ${esc(srcs)}
+      ${st!=="new"?` · <span class="state ${esc(st)}">${esc(st)}</span>`:""}</div>
+    <p class="summary">${esc(d.summary||"")}</p>
+    ${d.jd?"":'<p class="gap">Full job description not available from this source — open the posting for details.</p>'}
+    ${snapshotHtml(d.snapshot)}
+    ${(d.why&&d.why.length)?`<ul class="why">${d.why.map(w=>`<li>${esc(w)}</li>`).join("")}</ul>`:""}
+    ${(d.gaps&&d.gaps.length)?`<p class="gap">Gaps vs the JD: ${esc(d.gaps.join("; "))}</p>`:""}
+    ${tags?`<div class="tags">${tags}</div>`:""}
+    ${st==="applied"?trackHtml(id):""}
+    <div class="btns">
+      ${d.applyUrl?`<a class="act primary" style="text-decoration:none" href="${esc(d.applyUrl)}" target="_blank" rel="noopener">Open ↗</a>`:""}
+      ${st!=="shortlisted"?`<button class="act" data-do="shortlisted">${st==="new"?"Shortlist":"Back to shortlist"}</button>`:""}
+      ${st!=="skipped"?`<button class="act" data-do="skipped">Skip</button>`:""}
+      ${st!=="applied"?`<button class="act" data-do="applied">Applied</button>`:""}
+      <button class="act" data-do="tailor">${t?"Re-tailor":"Tailor now"}</button>
+      ${t?`<button class="act" data-do="toggle">${"View tailored draft"}</button>`:""}
+    </div>
+    ${t?`<div class="tailored" hidden>
+      <p class="small ${t.validated?'ok':'gap'}">${t.validated
+        ?`Checked ${esc(String(t.validatedAt||"").slice(0,10))} — content audit and PDF check passed${t.repoPath?" · archived in GitHub":""}`
+        :"Draft — not yet checked. The next scheduled run audits it against the master and checks the PDF before archiving."}</p>
+      <p><strong>What changed:</strong> ${esc(t.change_note||"")}</p>
+      ${(t.gaps&&t.gaps.length)?`<p class="gap">Stated gaps: ${esc(t.gaps.join("; "))}</p>`:""}
+      <div class="btns">
+        <button class="act" data-do="dl-resume">Resume PDF</button>
+        <button class="act" data-do="dl-cover">Cover letter PDF</button>
+        ${t.previous?`<button class="act" data-do="dl-prev">Previous draft PDF (${esc(String(t.previous.createdAt||"").slice(0,10))})</button>`:""}
+      </div>
+      <h4 class="small">Tailored resume</h4><pre>${esc(t.resume_md||"")}</pre>
+      <h4 class="small">Cover letter</h4><pre>${esc(t.cover_letter_md||"")}</pre>
+    </div>`:""}
+  </article>`;
+}
+const STAGES=["Applied","Recruiter call","Interview","Offer","Closed","No response"];
+const stOf=j=>j.data().status||"new";
+function trackHtml(id){
+  const a=apps.find(x=>x.id===id),d=a?a.data():{};
+  return `<div class="track">
+    <span><label for="stage-${esc(id)}">Stage</label><select id="stage-${esc(id)}" data-app="stage">${STAGES.map(s=>`<option${s===(d.stage||"Applied")?" selected":""}>${s}</option>`).join("")}</select></span>
+    <span><label>Applied on</label>${esc(d.appliedOn||"—")}</span>
+    <label for="next-${esc(id)}">Next step</label><input type="text" id="next-${esc(id)}" data-app="nextStep" value="${esc(d.nextStep||"")}" placeholder="e.g. follow up 28 Oct">
+  </div>`;
+}
+function fillCities(){const sel=$("f-city");if(!sel)return;const cur=sel.value;const set=new Set();jobs.forEach(j=>String(j.data().city||"").split(/[,/|]/).map(x=>x.trim()).filter(Boolean).forEach(c=>set.add(c)));if(jobs.some(j=>/remote|hybrid/i.test(j.data().workMode||"")))set.add("Remote");sel.innerHTML='<option value="">All locations</option>'+[...set].sort().map(c=>`<option>${esc(c)}</option>`).join("");sel.value=[...set].includes(cur)?cur:"";}
+function renderJobs(){
+  fillCities();
+  const fs=$("f-status").value,fc=$("f-city").value,q=$("f-q").value.trim().toLowerCase();
+  const match=j=>{const d=j.data(),st=stOf(j);
+    if(st!=="new"&&st!=="shortlisted")return false;
+    if(fs&&st!==fs)return false;
+    if(fc&&!String(d.city||"").toLowerCase().includes(fc.toLowerCase())&&!(fc==="Remote"&&/remote|hybrid/i.test(d.workMode||"")))return false;
+    if(q&&!(String(d.title)+" "+String(d.company)).toLowerCase().includes(q))return false;
+    return true;};
+  const main=jobs.filter(j=>(j.data().section||"main")==="main"&&match(j));
+  const maybe=jobs.filter(j=>j.data().section==="maybe"&&match(j));
+  $("jobsMain").innerHTML=main.length?main.map(jobCard).join(""):'<div class="empty">No jobs match. New cards arrive with each morning scan.</div>';
+  $("maybeHead").hidden=!maybe.length;
+  $("jobsMaybe").innerHTML=maybe.map(jobCard).join("");
+}
+function renderApplied(){
+  const appliedOn=j=>{const a=apps.find(x=>x.id===j.id);return (a&&a.data().appliedOn)||String(j.data().statusChangedAt||"").slice(0,10);};
+  const list=jobs.filter(j=>stOf(j)==="applied").sort((a,b)=>appliedOn(b).localeCompare(appliedOn(a)));
+  $("appliedList").innerHTML=list.length?list.map(jobCard).join(""):'<div class="empty">Nothing applied to yet. Mark a job Applied and it moves here.</div>';
+}
+function renderSkipped(){
+  const list=jobs.filter(j=>stOf(j)==="skipped");
+  $("skippedList").innerHTML=list.length?list.map(jobCard).join(""):'<div class="empty">No skipped jobs.</div>';
+}
+function renderCounts(){
+  const n=s=>jobs.filter(j=>s.includes(stOf(j))).length;
+  $("n-jobs").textContent=n(["new","shortlisted"]);$("n-applied").textContent=n(["applied"]);$("n-skipped").textContent=n(["skipped"]);
+}
+function renderResumes(){
+  $("masterBox").innerHTML=master
+    ?`<div class="top"><h3 style="margin:0">Version ${esc(master.version)}</h3><span class="muted small">updated ${esc(master.updated)}</span></div>
+      <p class="small muted">${esc(master.note||"")}</p>
+      <div class="btns"><button class="act" id="dlMaster">Download PDF</button></div>`
+    :'<span class="muted">No master resume loaded yet.</span>';
+  const dm=$("dlMaster");if(dm)dm.onclick=()=>offerPdf(namePrefix()+"_Resume_master_v"+(master.version||"1")+".pdf",master.markdown||"");
+  const tj=jobs.filter(j=>j.data().tailored);
+  $("tailoredList").innerHTML=tj.length?tj.map(j=>{const d=j.data();return `<div class="card" data-id="${esc(j.id)}">
+    <div class="top"><h3 style="margin:0">${esc(d.title)} — ${esc(d.company)}</h3><span class="muted small">${esc((d.tailored.createdAt||"").slice(0,10))}</span></div>
+    <p class="small">${esc(d.tailored.change_note||"")}</p>
+    <div class="btns"><button class="act" data-do="dl-resume">Download resume</button><button class="act" data-do="dl-cover">Download cover letter</button></div>
+  </div>`;}).join(""):'<div class="empty">No tailored versions yet — shortlist a job and click Tailor now.</div>';
+}
+function renderOutreach(){
+  if(!outreach.length){$("outreachList").innerHTML='<div class="empty">No contacts yet.</div>';return;}
+  const stats=["Drafted","Sent","Replied","Call held","Role shared","Closed"];
+  $("outreachList").innerHTML=outreach.map(o=>{const d=o.data();const touches=(d.touches||[]);
+    return `<div class="card" data-oid="${esc(o.id)}">
+      <div class="top"><h3 style="margin:0">${esc(d.org)}</h3>
+        <select id="ost-${esc(o.id)}" data-or="status">${stats.map(s=>`<option${s===d.status?" selected":""}>${s}</option>`).join("")}</select></div>
+      <div class="meta">${esc(d.type)} · contact: <input type="text" id="oc-${esc(o.id)}" data-or="contact" value="${esc(d.contact||"")}" placeholder="consultant name" style="width:160px"></div>
+      <div class="small" style="margin-top:8px">${touches.length?touches.map(t=>`${esc(t.date)} — ${esc(t.channel)}${t.note?": "+esc(t.note):""}`).join("<br>"):'<span class="muted">No touches logged.</span>'}</div>
+      <div class="rowline">
+        <select id="och-${esc(o.id)}"><option>Email</option><option>LinkedIn</option><option>Call</option></select>
+        <input type="text" id="onote-${esc(o.id)}" class="grow" placeholder="note (optional)">
+        <button class="act" data-do="log">Log touch</button>
+        <label for="ond-${esc(o.id)}">Follow up:</label><input type="date" id="ond-${esc(o.id)}" data-or="nextDate" value="${esc(d.nextDate||"")}">
+      </div>
+    </div>`;}).join("");
+}
+function renderDue(){
+  const due=outreach.filter(o=>{const d=o.data();return d.nextDate&&d.nextDate<=today()&&d.status!=="Closed";});
+  $("due").hidden=!due.length;
+  if(due.length)$("due").innerHTML="<strong>Follow-ups due:</strong> "+due.map(o=>esc(o.data().org)).join(" · ");
+}
+function renderScan(){
+  if(!runs.length){$("lastScan").textContent="No scan recorded yet.";return;}
+  const last=runs[runs.length-1].data();
+  $("lastScan").textContent=`Last scan ${last.date}: ${last.summary||""}`;
+}
+function renderAll(){renderJobs();renderApplied();renderSkipped();renderCounts();renderResumes();renderOutreach();renderDue();renderScan();}
+
+/* ---------- actions ---------- */
+/* ---------- resume Markdown → PDF ----------
+   House format (same rules as ops/resume_md.py in the repo — change both together):
+   no tables, plain "|" separators, visible links, "- " bullets, bold labels, no italics.
+   sanitiseMd() repairs older drafts that break those rules, so they still print cleanly. */
+function sanitiseMd(md){
+  const SEP=/^\s*\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)*\|?\s*$/, SYM=/^(\*\*)?[•▪◦●■]\s*(\*\*)?\s*/;
+  const out=[];
+  for(let ln of String(md||"").split("\n")){
+    ln=ln.replace(/\s+$/,"");
+    if(ln.includes("|")&&SEP.test(ln))continue;                       // table separator row
+    if(/^\s*\|.*\|\s*$/.test(ln)){                                      // table row → one bullet per cell
+      for(const c of ln.trim().replace(/^\||\|$/g,"").split("|")){const x=c.trim();if(x)out.push("- "+x);}
+      continue;}
+    if(/^\s*>/.test(ln)){ln=ln.replace(/^\s*>\s?/,"").trim();if(!ln)continue;}   // blockquote
+    if(SYM.test(ln))ln="- "+ln.replace(SYM,"");                         // • ▪ bullets
+    ln=ln.replace(/^\s*[*+]\s+/,"- ");                                  // * / + bullets
+    const m=ln.match(/^(\d+)\)\s+\*\*(.+?)\*\*\s*$/);if(m)ln=`**${m[1]}) ${m[2].trim()}**`;
+    ln=ln.replace(/\\$/,"");                                          // pandoc hard line break
+    ln=ln.replace(/\\\|/g,"|").replace(/<(https?:\/\/[^>\s]+)>/g,"[$1]($1)");
+    ln=ln.replace(/(^|[^*\w])\*(?!\*)([^*\n]+?)\*(?!\*)/g,"$1$2")       // *italic* → plain
+         .replace(/(^|[^\w_])_(?!_)([^_\n]+?)_(?![\w_])/g,"$1$2")
+         .replace(/<\/?(em|i)>/g,"");
+    out.push(ln);
+  }
+  return out.join("\n").replace(/\n{3,}/g,"\n\n").trim()+"\n";
+}
+
+/* Print style mirrors ops/resume.css: A4, 18mm margins, Arial-metric Helvetica only,
+   no italics, 20pt name, 12.5pt section heads with a thin grey rule, 10.5pt body,
+   single column, underlined live links. */
+function mdToPdfBlob(rawMd){
+  const J=window.jspdf&&window.jspdf.jsPDF; if(!J) throw new Error("PDF library didn't load");
+  const doc=new J({unit:"pt",format:"a4"}); const FONT="helvetica";
+  const W=595.28,H=841.89,M=51,TW=W-2*M; let y=M;
+  const clean=t=>String(t).replace(/[‘’]/g,"'").replace(/[“”]/g,'"').replace(/[–—]/g,"-")
+    .replace(/₹/g,"Rs ").replace(/ /g," ").replace(/<[^>]+>/g,"");
+  const need=h=>{if(y+h>H-M){doc.addPage();y=M;}};
+  const tokens=s=>{
+    const rx=/\*\*(.+?)\*\*|\[([^\]]+)\]\(((?:https?:|mailto:)[^)\s]+)\)|(https?:\/\/[^\s|)]+)|([\w.+-]+@[\w-]+(?:\.[\w-]+)+)/g;
+    const out=[];let i=0,m;
+    while((m=rx.exec(s))){
+      if(m.index>i)out.push({t:s.slice(i,m.index)});
+      if(m[1]!==undefined)out.push({t:m[1],b:true});
+      else if(m[2]!==undefined)out.push({t:m[2],url:m[3]});
+      else if(m[4])out.push({t:m[4],url:m[4]});
+      else out.push({t:m[5],url:"mailto:"+m[5]});
+      i=rx.lastIndex;}
+    if(i<s.length)out.push({t:s.slice(i)});
+    return out.map(x=>({...x,t:clean(x.t)}));
+  };
+  /* word-wrapped line with inline bold and links */
+  const rich=(text,{size=10.5,bold=false,indent=0,gap=4,lh=1.18}={})=>{
+    const L=size*lh,maxW=TW-indent;
+    const font=x=>{doc.setFont(FONT,(x.b||bold)?"bold":"normal");doc.setFontSize(size);};
+    const width=(x,t)=>{font(x);return doc.getTextWidth(t);};
+    const words=[];for(const tk of tokens(text))for(const w of tk.t.split(/(?<=\s)/))if(w)words.push({...tk,t:w});
+    const lines=[];let line=[],w=0;
+    for(const x of words){
+      const full=width(x,x.t),core=width(x,x.t.replace(/\s+$/,""));
+      if(line.length&&w+core>maxW){lines.push(line);line=[];w=0;if(!x.t.trim())continue;}
+      line.push({...x,w:full});w+=full;}
+    if(line.length)lines.push(line);
+    for(const words of lines){
+      // draw runs of same-style words as one string so the PDF keeps natural word spacing
+      const ln=[];for(const s of words){const p=ln[ln.length-1];
+        if(p&&!!p.b===!!s.b&&p.url===s.url){p.t+=s.t;}else ln.push({...s});}
+      for(const s of ln)s.w=width(s,s.t);
+      need(L);let x=M+indent;
+      for(const s of ln){
+        font(s);doc.setTextColor(17,17,17);doc.text(s.t,x,y+size*0.82);
+        if(s.url){const tw=width(s,s.t.replace(/\s+$/,""));doc.setDrawColor(17,17,17);doc.setLineWidth(.45);
+          doc.line(x,y+size*0.95,x+tw,y+size*0.95);doc.link(x,y,tw,L,{url:s.url});}
+        x+=s.w;}
+      y+=L;}
+    y+=gap;
+  };
+  const BODY=10.5*1.18;
+  let afterName=0;
+  for(const raw of sanitiseMd(rawMd).split("\n")){
+    const ln=raw.trimEnd(); if(!ln.trim()||/^<!--/.test(ln)) continue;
+    if(/^# /.test(ln)){rich(ln.slice(2),{size:20,bold:true,lh:1.1,gap:5});afterName=3;continue;}
+    if(/^## /.test(ln)){afterName=0;need(12.5*1.15+8+BODY*2);if(y>M)y+=10;
+      rich(ln.slice(3),{size:12.5,bold:true,lh:1.15,gap:2});
+      doc.setDrawColor(136,136,136);doc.setLineWidth(.5);doc.line(M,y,W-M,y);y+=5;continue;}
+    if(/^### /.test(ln)){need(BODY*3+7);y+=7;rich(ln.slice(4),{bold:true,gap:2});continue;}
+    if(/^\*\*[^*]+\*\*$/.test(ln.trim())){need(BODY*3+4);y+=4;rich(ln.trim(),{bold:true,gap:2});continue;}
+    if(/^\s*- /.test(ln)){need(BODY);doc.setFillColor(17,17,17);doc.circle(M+5,y+10.5*0.5,1.35,"F");
+      rich(ln.replace(/^\s*- /,""),{indent:15,gap:3});continue;}
+    if(afterName>0&&/(Mobile|Email|Phone)/i.test(ln)){rich(ln,{size:9.5,lh:1.25,gap:7});afterName=0;continue;}
+    if(afterName>0)afterName--;
+    rich(ln,{gap:4});
+  }
+  return doc.output("blob");
+}
+
+function namePrefix(){const m=((master&&master.markdown)||"").match(/^#\s+(.+)$/m);return m?m[1].trim().split(/\s+/).map(w=>w.charAt(0).toUpperCase()+w.slice(1).toLowerCase()).join("").replace(/[^A-Za-z0-9]/g,""):"Candidate";}
+function slugName(d,kind,ext){return (namePrefix()+"_"+(d.company||"")+"_"+kind).replace(/[^A-Za-z0-9_]+/g,"")+ext;}
+async function offerPdf(name,md){
+  if(!downloads){toast("Downloads aren't available in this view.");return;}
+  try{await downloads.save({filename:name,data:mdToPdfBlob(md)});}
+  catch(e){if(e&&e.code!=="declined")toast("Download failed: "+(e.message||e.code));}
+}
+
+/* Quick in-browser draft. The full release workflow (independent content audit +
+   rendered-PDF QA) runs in the scheduled job — skills resume-tailoring and
+   resume-release-check in the repo's ops/skills/. Drafts made here are marked
+   "not yet checked" until that run validates them. Keep these rules in step with
+   ops/skills/resume-tailoring/SKILL.md. */
+async function tailor(id,btn){
+  if(!sample){toast("Ask-Claude isn't available in this view.");return;}
+  if(!master){toast("Master resume not loaded yet.");return;}
+  const j=jobs.find(x=>x.id===id);if(!j)return;const d=j.data();
+  const old=btn.textContent;btn.disabled=true;btn.textContent="Tailoring…";
+  try{
+    const prompt=
+`You are a conservative resume editor tailoring the candidate's resume to one job.
+
+FACTS — the master resume is the only source of truth; the job description is a relevance guide, never evidence.
+- Only reorder, condense, merge or re-emphasise what the master already says. Never invent or infer employers, titles, dates, metrics, team sizes, budgets, tools, certifications, projects or responsibilities.
+- Keep every employer, title and date exactly as written, and keep all roles. Contract values, counts and other numbers stay exactly as written.
+- Preserve scope and certainty: never turn assisted into led, contributed into owned, exposure into expertise, or a team result into an individual one.
+- Use the job's terms only where they truly describe experience the master shows. No keyword stuffing.
+- Shorten a bullet only if it keeps the achievement, the candidate's role and the scale; cut repetition and background first.
+- Anything the job wants that the master does not show goes in "gaps", never in the resume.
+- Keep the candidate's voice and the master's spelling convention. At most three A4 pages (10.5pt Arial); two is better if nothing important is lost. Never drop content from the last 10 years to get there.
+
+FORMAT — plain GitHub Markdown in exactly this shape (anything else prints badly):
+- The "# " name line and the title line exactly as in the master, then then the contact line copied character-for-character from the master (plain "|" separators, LinkedIn as [url](url) with the full URL as the visible text).
+- "## SECTION" for sections; each role as "### Title | Company | Month YYYY – Month YYYY" (or "– Present"), copied exactly from the master in title case, never all capitals; "**Label**" on its own line for a sub-group; "- " for every bullet.
+- No tables, no "\\|", no <angle-bracket> links, no italics, no blockquotes, no HTML, no emoji or symbol bullets, no headings deeper than ###.
+
+COVER LETTER — under 250 words, specific to this company and role, the candidate's voice, no flattery, only real experience, same format rules (no italics, no tables).
+
+MASTER RESUME (markdown):
+${master.markdown}
+
+JOB:
+Title: ${d.title}
+Company: ${d.company}
+Location: ${d.city||""} ${d.workMode||""}
+Experience asked: ${d.exp||"not stated"}
+Job description: ${d.jd||"(full JD not available — tailor from the title, summary and why-it-matches below)"}
+Summary: ${d.summary||""}
+Match notes: ${(d.why||[]).join("; ")}
+
+Reply with ONLY JSON: {"resume_md": string, "cover_letter_md": string, "change_note": string (2-3 sentences, what moved and why), "gaps": string[] (what the JD wants that the CV lacks, may be empty)}`;
+    const out=await sample.json(prompt,{modelTier:"complex",cache:false});
+    if(!out||typeof out.resume_md!=="string")throw{code:"invalid_json",message:"Unexpected shape"};
+    const draft={resume_md:sanitiseMd(out.resume_md),cover_letter_md:sanitiseMd(String(out.cover_letter_md||"")),
+      change_note:String(out.change_note||""),gaps:Array.isArray(out.gaps)?out.gaps.map(String):[],
+      createdAt:new Date().toISOString(),basedOn:master.version,validated:false};
+    // keep the draft being replaced, so a re-tailor never loses the earlier version
+    const prev=d.tailored?{...d.tailored}:null; if(prev)delete prev.previous;
+    await save("jobs/"+id,{tailored:prev?{...draft,previous:prev}:draft},true);
+    toast("Tailored draft ready on the card.");
+  }catch(e){
+    if(e&&e.code==="not_granted")toast("Claude access was declined for this page, so tailoring is off for this visit.");
+    else if(e&&e.code==="rate_limited")toast("Usage limit reached — try again later.");
+    else if(e&&e.code==="invalid_json")toast("The draft came back malformed — click again to retry.");
+    else if(e&&e.code)toast("Tailoring failed: "+(e.message||e.code));
+  }finally{btn.disabled=false;btn.textContent=old;}
+}
+
+document.addEventListener("click",async ev=>{
+  const b=ev.target.closest("[data-do]");if(!b)return;
+  const card=b.closest("[data-id],[data-oid]");const act=b.dataset.do;
+  if(card&&card.dataset.id){
+    const id=card.dataset.id;const j=jobs.find(x=>x.id===id);const d=j?j.data():{};
+    if(act==="toggle"){const p=card.querySelector(".tailored");if(p)p.hidden=!p.hidden;return;}
+    if(act==="dl-resume")return offerPdf(slugName(d,"Resume",".pdf"),(d.tailored||{}).resume_md||"");
+    if(act==="dl-cover")return offerPdf(slugName(d,"CoverLetter",".pdf"),(d.tailored||{}).cover_letter_md||"");
+    if(act==="dl-prev")return offerPdf(slugName(d,"Resume_previous",".pdf"),((d.tailored||{}).previous||{}).resume_md||"");
+    if(act==="tailor")return tailor(id,b);
+    if(["shortlisted","skipped","applied"].includes(act)){
+      try{
+        await save("jobs/"+id,{status:act,statusChangedAt:new Date().toISOString()},true);
+        // keep an existing tracker row (stage, next step) if the job was applied to before
+        if(act==="applied"&&!apps.some(a=>a.id===id))await save("applications/"+id,{role:d.title,company:d.company,city:d.city||"",stage:"Applied",appliedOn:today(),nextStep:"",source:(d.sources||[])[0]||""});
+        toast(act==="applied"?"Moved to the Applied tab.":act==="skipped"?"Moved to the Skipped tab.":"Shortlisted — it's on the Jobs tab.");
+      }catch(_){}
+    }
+  }else if(card&&card.dataset.oid){
+    const id=card.dataset.oid;
+    if(act==="log"){
+      const o=outreach.find(x=>x.id===id);if(!o)return;
+      const ch=$("och-"+id).value,note=$("onote-"+id).value.trim();
+      const touches=[...(o.data().touches||[]),{date:today(),channel:ch,note}];
+      try{await save("outreach/"+id,{touches},true);$("onote-"+id).value="";}catch(_){}
+    }
+  }
+});
+document.addEventListener("change",async ev=>{
+  const el=ev.target;
+  if(el.dataset.app){const tr=el.closest("[data-id]");if(tr)try{await save("applications/"+tr.dataset.id,{[el.dataset.app]:el.value},true);}catch(_){}}
+  if(el.dataset.or){const c=el.closest("[data-oid]");if(c)try{await save("outreach/"+c.dataset.oid,{[el.dataset.or]:el.value},true);}catch(_){}}
+  if(["f-status","f-city"].includes(el.id))renderJobs();
+});
+$("f-q").addEventListener("input",renderJobs);
+$("processAll").onclick=async()=>{
+  const list=jobs.filter(j=>j.data().status==="shortlisted"&&!j.data().tailored);
+  if(!list.length){toast("No shortlisted jobs without a draft.");return;}
+  toast("Tailoring "+list.length+" job(s) — one at a time…");
+  for(const j of list){const btn=document.querySelector(`[data-id="${CSS.escape(j.id)}"] [data-do="tailor"]`)||$("processAll");await tailor(j.id,btn);}
+};
+
+/* ---------- boot ---------- */
+(async()=>{
+  const user=await claude.use("user");
+  try{const cw=user&&await user.can("data.write");if(cw===false){canWrite=false;$("roNote").hidden=false;}}catch(_){}
+  sample=await claude.use("sample");
+  downloads=await claude.use("downloads");
+  db=await claude.use("db");
+  if(!db){$("lastScan").textContent="Live data unavailable in this view.";renderAll();return;}
+  const sub=(q,fn)=>q.onSnapshot(s=>{fn(s.docs);renderAll();},e=>{if(e.code!=="unavailable")toast("Live updates stopped: "+e.code);});
+  sub(db.collection("jobs").orderBy("fit","desc"),d=>jobs=d);
+  sub(db.collection("applications"),d=>apps=d);
+  sub(db.collection("outreach"),d=>outreach=d);
+  sub(db.collection("runs"),d=>runs=d);
+  db.doc("config/master-resume").onSnapshot(s=>{master=s.exists?s.data():null;renderResumes();},()=>{});
+})();
+</script>

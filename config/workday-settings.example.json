@@ -1,0 +1,6 @@
+{
+  "search_terms": ["<main job title>", "<another title you would accept>"],
+  "title_include": "<words that must appear in the title, as a regex, e.g. operations|programme>",
+  "title_exclude": "intern|analyst|assistant",
+  "locations": "<cities or countries you accept, as a regex, e.g. India|Gurugram|Remote>"
+}
