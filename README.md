@@ -71,7 +71,8 @@ Check each job site's terms before you switch on a source that reads it. The set
 
 ## Similar projects
 
-[career-ops](https://github.com/santifer/career-ops) by Santiago Fernández de Valderrama takes a similar approach with Claude Code: it scores job offers, generates tailored CVs and tracks applications from the terminal. This repo differs in running on a daily schedule inside Claude, serving results to a dashboard, keeping the search criteria as a plain file you edit on GitHub, and gating every tailored resume behind an independent release check.
+[career-ops](https://github.com/santifer/career-ops) by Santiago Fernández de Valderrama takes a similar approach with AI CLI; it scores job offers, generates tailored CVs and tracks applications from the terminal. 
+This repo differs in running on a daily schedule inside Claude, serving results to a dashboard, keeping the search criteria as a plain file you edit on GitHub, and gating every tailored resume behind an independent release check.
 
 ## License
 
