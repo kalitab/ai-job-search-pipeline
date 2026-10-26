@@ -1,4 +1,4 @@
-# AI job search pipeline
+# Morning job scan
 
 A job search that runs itself every morning. It collects roles from your job alert emails, job boards and the careers pages of companies you want to work for, removes duplicates, filters them by your own criteria, adds a company rating snapshot, scores each role against your resume, and puts a short list on a dashboard. When a role looks right, one click drafts a tailored resume and cover letter, which pass an independent check before they are released. Every version is kept in this repo.
 
@@ -68,6 +68,10 @@ Check each job site's terms before you switch on a source that reads it. The set
 - **Config separate from code.** Your criteria are a plain Markdown file you can edit in the GitHub web page. No code changes.
 - **Modular sources.** Each source runs on its own. If one fails, the run logs it and carries on. Add, drop or swap sources as you like.
 - **Testing before release.** A lint step, then a second agent that never saw the draft checks every claim against your master resume and inspects the actual PDF.
+
+## Similar projects
+
+[career-ops](https://github.com/santifer/career-ops) by Santiago Fernández de Valderrama takes a similar approach with Claude Code: it scores job offers, generates tailored CVs and tracks applications from the terminal. This repo differs in running on a daily schedule inside Claude, serving results to a dashboard, keeping the search criteria as a plain file you edit on GitHub, and gating every tailored resume behind an independent release check.
 
 ## License
 
